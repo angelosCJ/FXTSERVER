@@ -14,7 +14,7 @@ app.use(cors({origin:"*"})); // This allows requests from all origins
 
 app.use(express.json());
 
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(MONGO_URI)
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB error:', err));
 
