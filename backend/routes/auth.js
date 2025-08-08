@@ -6,16 +6,24 @@ const router = express.Router();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-router.post("/register",async(req,res)=>{
-  const{userName,email,password} = req.body;
-  const hashed = await bcrypt.hash(password,10);
-      try {
-        const user = await User.create({userName,email,password:hashed});
-           res.json({message:"User Created"})
-      } catch (error) {
-           res.status(400).json({error: "User already exists"});
-      }
+router.post("/register", async (req, res) => {
+  const { userName, email, password } = req.body;
+
+  try {
+    if (!userName || !email || !password) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    const hashed = await bcrypt.hash(password, 10);
+    const user = await User.create({ userName, email, password: hashed });
+
+    res.json({ message: "User Created", user });
+  } catch (error) {
+    console.error("Registration error:", error); // ✅ shows real reason in server logs
+    res.status(400).json({ error: error.message });
+  }
 });
+
 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
