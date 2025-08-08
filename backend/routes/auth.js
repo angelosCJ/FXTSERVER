@@ -7,10 +7,10 @@ const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
 
 router.post("/register",async(req,res)=>{
-  const{name,email,password} = req.body;
+  const{userName,email,password} = req.body;
   const hashed = await bcrypt.hash(password,10);
       try {
-        const user = await User.create({name,email,password:hashed});
+        const user = await User.create({userName,email,password:hashed});
            res.json({message:"User Created"})
       } catch (error) {
            res.status(400).json({error: "User already exists"});
