@@ -1,15 +1,25 @@
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET;
+
 function authMiddleware(req, res, next) {
-  const authHeader = req.headers.authorization;
-  console.log('Auth header:', authHeader);
-  if (!authHeader) return res.status(401).json({ error: 'Unauthorized' });
-  
-  const token = authHeader.split(' ')[1];
+  console.log('Authorization header:', req.headers.authorization);
+
+  if (!req.headers.authorization) {
+    console.log('No Authorization header');
+    return res.status(401).json({ error: 'Unauthorized - No Authorization header' });
+  }
+
+  const token = req.headers.authorization.split(' ')[1];
+  console.log('Token extracted:', token);
+
   try {
     const payload = jwt.verify(token, JWT_SECRET);
+    console.log('JWT verified. Payload:', payload);
     req.user = payload;
     next();
   } catch (err) {
-    return res.status(401).json({ error: 'Invalid token' });
+    console.error('JWT verification failed:', err.message);
+    return res.status(401).json({ error: 'Unauthorized - Invalid token' });
   }
 }
 
